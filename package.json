@@ -1,0 +1,42 @@
+{
+  "name": "payrecs-serverless",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "local": "yarn cross-env NODE_ENV=local serverless offline",
+    "deploy-dev": "yarn cross-env NODE_ENV=development serverless deploy --stage dev",
+    "deploy-prod": "yarn cross-env NODE_ENV=production serverless deploy --stage prod"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/node": "^7.14.9",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-flow": "^7.14.5",
+    "cross-env": "~7.0.3",
+    "flow-bin": "^0.167.0",
+    "prettier": "~2.5.1",
+    "prompts": "~2.4.2",
+    "serverless": "^2.56.0",
+    "serverless-bundle": "^4.1.0",
+    "serverless-cf-vars": "~0.3.5",
+    "serverless-dotenv-plugin": "~3.10.0",
+    "serverless-offline": "^6.8.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "~3.44.0",
+    "@aws-sdk/credential-provider-node": "~3.41.0",
+    "axios": "~0.21.1",
+    "date-fns": "~2.27.0",
+    "dotenv-defaults": "~3.0.0",
+    "express": "~4.17.1",
+    "fs-extra": "~10.0.0",
+    "ftp": "~0.3.10",
+    "graphql": "~14.6.0",
+    "non-maybe": "~1.0.1",
+    "progress": "~2.0.3",
+    "serverless-http": "~2.7.0"
+  }
+}

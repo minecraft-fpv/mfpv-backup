@@ -1,0 +1,13 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+.webpack
+
+.env
+.secrets
+.DS_Store
+.idea
+yarn-error.log

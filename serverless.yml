@@ -1,0 +1,62 @@
+
+# Helpful docs: https://serverless-stack.com/#the-basics
+# https://serverless.com/framework/docs/providers/aws/events/apigateway
+
+service: mfpv-backup
+
+frameworkVersion: '2'
+
+custom:
+  bundle:
+    packager: yarn
+  serverless-offline:
+    httpPort: 4000
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  memorySize: 2048 # optional, in MB, default is 1024
+  timeout: 900 # optional, in seconds, default is 6
+  iam:
+    role:
+      managedPolicies:
+        - 'arn:aws:iam::aws:policy/AmazonElasticFileSystemClientReadWriteAccess'
+#  apiGateway:
+#    shouldStartNameWithService: true
+
+#package:
+#  individually: true # https://www.serverless.com/framework/docs/providers/aws/guide/packaging#packaging-functions-separately
+
+functions:
+  mfpvBackup: # the name of the lambda. Size of bundle does not seem to affect compute performance but may incur higher memory usage.
+    handler: src/restHandler.handler
+    vpc:
+      securityGroupIds:
+        - '${env:MFPV_AWS_EFS_SECURITY_GROUP_ID}'
+      subnetIds:
+        - '${env:MFPV_AWS_EFS_SUBNET_ID}'
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+
+resources:
+  # Here we are extending the resource config serverless generated for our lambda with FileSystemConfigs.
+  extensions: # https://www.serverless.com/framework/docs/providers/aws/guide/resources#override-aws-cloudformation-resource
+    # normalizedFunctionName, see link above ^
+    MfpvBackupLambdaFunction:
+      Properties:
+        FileSystemConfigs:
+          - Arn: '${env:MFPV_AWS_EFS_FSAP_ARN}'
+            LocalMountPath: '${env:MFPV_AWS_EFS_MOUNT_POINT}'
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+  - serverless-offline
+  - serverless-dotenv-plugin # Load .env as environment variables

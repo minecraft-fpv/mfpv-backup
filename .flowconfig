@@ -1,0 +1,11 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/gulp-flowtype/test/.*
+<PROJECT_ROOT>/build/.*
+<PROJECT_ROOT>/mjml-build/.*
+
+[include]
+
+[libs]
+flow-typed
+
+[options]
