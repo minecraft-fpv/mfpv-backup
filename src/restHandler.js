@@ -43,18 +43,18 @@ app.get('/backup', async (req, res) => {
         config.java.remotePath
     )
     // const stream = fs.createReadStream('./temp/test.mov')
-    await uploadS3(
-      // {
-      //   stream,
-      //   sizeBytes: 8.5 * 1024 * 1024
-      // },
-      stream,
-      // fileLoc,
-      // './temp/simpnation.zip',
-      'snapshots',
-      'Minecraft_FPV.zip',
-      config.aws.bucket
-    )
+    // await uploadS3(
+    //   // {
+    //   //   stream,
+    //   //   sizeBytes: 8.5 * 1024 * 1024
+    //   // },
+    //   stream,
+    //   // fileLoc,
+    //   // './temp/simpnation.zip',
+    //   'snapshots',
+    //   'Minecraft_FPV.zip',
+    //   config.aws.bucket
+    // )
     const elapsed = Date.now() - startTime
     res.status(200).send(`${elapsed / 1000} seconds`)
   } catch (err) {

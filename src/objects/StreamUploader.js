@@ -49,6 +49,10 @@ export default class StreamUploader {
     this.promise = new Promise((resolve, reject) => {
       this._resolve = resolve
       this._reject = reject
+
+      process.on('SIGTERM', () => {
+        reject()
+      })
     })
 
     this.pendingParts = new Feeder((part) => {
@@ -90,17 +94,20 @@ export default class StreamUploader {
     )
     this.uploadId = res.UploadId
 
+    console.log('here')
+    // this.metaStream.stream.resume()
     this.metaStream.stream.on('data', (data) => {
-      this.processedBytes += data.length
+      if (!data) return
 
-      // console.log('data', data)
-      // console.log('data', data.length)
+      this.processedBytes += data.length
 
       // Add data to the buffer as it comes in.
       const totalLength = this.buffer.length + data.length
       this.buffer = Buffer.concat([this.buffer, data], totalLength)
 
       // console.log('buffer.length', this.buffer.length)
+
+      // console.log('this.buffer.length', this.buffer.length)
 
       // If the buffer grows beyond the threshold, cut it off and queue the part to be uploaded.
       if (this.buffer.length >= this.partSizeBytes) {
@@ -148,7 +155,7 @@ export default class StreamUploader {
       PartNumber: myPartNumber,
     }
     this.completedParts.push(completedPart)
-    // console.log('this.completedParts.length', this.completedParts.length)
+    console.log('this.completedParts.length', this.completedParts.length)
   }
 
   async finishUpload() {

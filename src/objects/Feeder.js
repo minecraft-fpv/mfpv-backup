@@ -9,12 +9,17 @@ export default class Feeder<T> {
   _reject: any
 
   feedingStarted: boolean
+  stop: boolean = false
 
   constructor(consumer: (part: T) => Promise<any>) {
     this.consumer = consumer
     this.promise = new Promise((resolve, reject) => {
       this._resolve = resolve
       this._reject = reject
+
+      process.on('SIGTERM', () => {
+        this.stop = true
+      })
     })
   }
 
@@ -32,7 +37,8 @@ export default class Feeder<T> {
 
   feed() {
     const part = this.pendingParts.shift()
-    if (!part) {
+    console.log('part', part)
+    if (!part || this.stop) {
       // Nothing left to upload
       this._resolve()
       return
