@@ -1,15 +1,12 @@
 // @flow
 
-import Stream from "stream";
 import {
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
-  S3Client,
   UploadPartCommand
 } from "@aws-sdk/client-s3";
 import type {MetaStream} from "../adapters/apexGet";
 import ProgressBar from "progress";
-import Feeder from "./Feeder";
 
 export default class StreamUploader {
   // constants:
