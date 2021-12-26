@@ -99,44 +99,6 @@ export default class StreamUploader {
     }, async () => {
       await this.finishUpload()
     })
-
-    // console.log('here')
-    // this.metaStream.stream.resume()
-    // this.metaStream.stream.on('data', (data) => {
-    //   if (!data) return
-    //
-    //   this.processedBytes += data.length
-    //
-    //   // Add data to the buffer as it comes in.
-    //   const totalLength = this.buffer.length + data.length
-    //   this.buffer = Buffer.concat([this.buffer, data], totalLength)
-    //
-    //   // console.log('buffer.length', this.buffer.length)
-    //
-    //   // console.log('this.buffer.length', this.buffer.length)
-    //
-    //   // If the buffer grows beyond the threshold, cut it off and queue the part to be uploaded.
-    //   if (this.buffer.length >= this.partSizeBytes) {
-    //     const data = this.buffer.slice(0, this.partSizeBytes)
-    //     this.buffer = this.buffer.slice(this.partSizeBytes)
-    //     // console.log('chopped data.length', data.length)
-    //     // console.log('this.buffer.length', this.buffer.length)
-    //     this.pendingParts.push(data)
-    //   }
-    // })
-    //
-    // this.metaStream.stream.once('close', async () => {
-    //   console.log('once close')
-    //   // When the stream closes, the buffer should contain the remaining data which hasn't been uploaded yet.
-    //   this.pendingParts.push(this.buffer)
-    //   await this.pendingParts.promise
-    //   console.log('done awaiting pendingParts')
-    //
-    //   // End
-    //   this.finishUpload().catch(err => {
-    //     this.handleError(err)
-    //   })
-    // })
   }
 
   async uploadPart(data: Buffer, partNumber: number) {

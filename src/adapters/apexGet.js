@@ -49,15 +49,6 @@ export default async function apexGet(
 
   const stream = new PartStream()
 
-  // // $FlowFixMe
-  // const originalWrite = stream._write
-  // function newWrite(chunk, encoding, callback) {
-  //   console.log('chunk', chunk.length)
-  //   return originalWrite(chunk, encoding, callback)
-  // }
-  // // $FlowFixMe
-  // stream._write = newWrite.bind(stream)
-
   client.downloadTo(stream, remotePath).then(res => {
     console.log('res', res)
     client.close()
@@ -67,26 +58,8 @@ export default async function apexGet(
     stream.destroy()
   })
 
-  // await client.downloadTo(fileLoc, remotePath)
-  // console.log(`Downloaded World to ${fileLoc}`)
-  // client.close()
-  // const stream = fs.createReadStream(fileLoc)
-  // const stat = await (new Promise((resolve, reject) => {
-  //   fs.stat(fileLoc, (err, stat) => {
-  //     if (err) return reject(err)
-  //     resolve(stat)
-  //   })
-  // }))
-
-  // stream.on('data', (data) => {
-  //   console.log('data', data?.length)
-  // })
-
   return {
     partStream: stream,
     sizeBytes,
   }
-
-  // Returns the stream:
-  // return await promise
 }
