@@ -134,7 +134,7 @@ exports.handler =  async function(event: any): any {
       "multiValueHeaders": {
         // "X-Custom-Header": ["My value", "My other value"],
       },
-      "body": JSON.stringify({message: "Backup Complete"})
+      "body": JSON.stringify({message: "Backup Failed"})
     }
   }
 }
