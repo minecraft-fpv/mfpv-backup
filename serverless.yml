@@ -37,6 +37,7 @@ functions:
 #      subnetIds:
 #        - '${env:MFPV_AWS_EFS_SUBNET_ID}'
     events:
+      - schedule: cron(0 4 * * ? *)
       - http:
           path: /backup
           method: ANY
