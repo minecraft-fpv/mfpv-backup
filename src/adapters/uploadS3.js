@@ -25,9 +25,10 @@ export default async function uploadS3(
       // ExpectedBucketOwner: (await client.config.credentials()).accessKeyId,
     })
   )
-  const existingSnapshots = items.Contents.filter((item) =>
+  console.log('items', items)
+  const existingSnapshots = items.Contents?.filter((item) =>
     item.Key.startsWith(remoteFolderName)
-  )
+  ) ?? []
   const snapshotsInThisMonth = existingSnapshots.filter((item) =>
     isThisMonth(item.LastModified)
   )

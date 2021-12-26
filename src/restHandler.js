@@ -1,11 +1,11 @@
 // @flow
 
-import serverless from "serverless-http"
 import express from "express"
 import apexGet from "./adapters/apexGet";
 import config from "./config";
 import uploadS3 from "./adapters/uploadS3";
-import fs from 'fs'
+import axios from 'axios'
+import serverless from 'serverless-http'
 
 const app = express();
 
@@ -33,9 +33,14 @@ app.get("/aaa", (req, res) => {
 });
 
 app.get('/backup', async (req, res) => {
+  console.log('Starting Backup')
+  let stream
   try {
+    const panda = await axios.get('https://some-random-api.ml/animal/panda')
+    console.log('panda.data', panda.data)
+
     const startTime = Date.now()
-    const stream = await apexGet(
+    stream = await apexGet(
         config.java.host,
         config.java.username,
         config.java.password,
@@ -43,22 +48,25 @@ app.get('/backup', async (req, res) => {
         config.java.remotePath
     )
     // const stream = fs.createReadStream('./temp/test.mov')
-    // await uploadS3(
-    //   // {
-    //   //   stream,
-    //   //   sizeBytes: 8.5 * 1024 * 1024
-    //   // },
-    //   stream,
-    //   // fileLoc,
-    //   // './temp/simpnation.zip',
-    //   'snapshots',
-    //   'Minecraft_FPV.zip',
-    //   config.aws.bucket
-    // )
+    await uploadS3(
+      // {
+      //   stream,
+      //   sizeBytes: 8.5 * 1024 * 1024
+      // },
+      stream,
+      // fileLoc,
+      // './temp/simpnation.zip',
+      'snapshots',
+      config.java.remotePath,
+      config.aws.bucket
+    )
     const elapsed = Date.now() - startTime
     res.status(200).send(`${elapsed / 1000} seconds`)
   } catch (err) {
     console.error(err)
+    if (stream) {
+      stream.partStream.destroy()
+    }
     res.sendStatus(400)
   }
 })
@@ -71,3 +79,30 @@ app.use((req, res, next) => {
 
 // $FlowFixMe
 exports.handler = serverless(app);
+
+// exports.handler =  async function(event: any): any {
+//   try {
+//     await apexGet(
+//       config.java.host,
+//       config.java.username,
+//       config.java.password,
+//       config.java.port,
+//       config.java.remotePath
+//     )
+//   } catch (err) {
+//     console.error(err)
+//     throw err
+//   }
+//
+//   return {
+//     "statusCode": 200,
+//     "headers": {
+//       "Content-Type": "application/json"
+//     },
+//     "isBase64Encoded": false,
+//     "multiValueHeaders": {
+//       // "X-Custom-Header": ["My value", "My other value"],
+//     },
+//     "body": JSON.stringify({message: "Backup Complete"})
+//   }
+// }
