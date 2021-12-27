@@ -1,3 +1,9 @@
+# mfpv-backup
+
+This serverless project will download the world backup from the java server via FTP, and then it will save the snapshot in AWS S3.
+
+It will store one snapshot per month.
+
 ## Manual AWS Setup
 This project uses serverless to automate some AWS setup, but not all of it.
 
