@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-s3"
 import path from "path"
 import config from "../config"
-import { formatISO, isThisMonth } from "date-fns"
+import {differenceInCalendarDays, formatISO, isLastDayOfMonth, parseISO} from "date-fns"
 import type {MetaStream} from "./apexGet";
 import StreamUploader from "../objects/StreamUploader";
 
@@ -29,24 +29,27 @@ export default async function uploadS3(
   const existingSnapshots = items.Contents?.filter((item) =>
     item.Key.startsWith(remoteFolderName)
   ) ?? []
-  const snapshotsInThisMonth = existingSnapshots.filter((item) =>
-    isThisMonth(item.LastModified)
-  )
-  console.log("snapshotsInThisMonth", snapshotsInThisMonth.map(_ => _.Key))
+  const deletions = existingSnapshots.filter((item) => {
+    const date = item.LastModified
+    const lastSeven = Math.abs(differenceInCalendarDays(Date.now(), date)) <= 7
+    const lastDay = isLastDayOfMonth(date)
+    console.log('date', date)
+    console.log('differenceInCalendarDays(Date.now(), date)', differenceInCalendarDays(Date.now(), date))
+    console.log('lastSeven', lastSeven)
+    console.log('lastDay', lastDay)
+    return !lastSeven && !lastDay
+  })
+  console.log('deletions', deletions.map(_ => _.Key))
 
   await upload(ftpStream, remoteFolderName, remoteFileName, bucket, client)
 
-  if (snapshotsInThisMonth.length) {
-    // Delete comes after Put on purpose.
-    // We don't want to be in any intermediate state where there are no
-    // snapshots in the cloud because of small risk of fluke failure
-    // which leave the cloud state without any snapshots.
-    console.log("deleting", snapshotsInThisMonth.map(({Key}) => Key))
+  if (deletions.length) {
+    console.log("deleting", deletions.map(({Key}) => Key))
     const deleteRes = await client.send(
       new DeleteObjectsCommand({
         Bucket: bucket,
         Delete: {
-          Objects: snapshotsInThisMonth,
+          Objects: deletions,
         },
       })
     )
