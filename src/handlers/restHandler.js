@@ -1,9 +1,9 @@
 // @flow
 
 // import express from "express"
-import apexGet from "./adapters/apexGet";
-import config from "./config";
-import uploadS3 from "./adapters/uploadS3";
+import apexGet from "../adapters/apexGet";
+import config from "../config";
+import uploadS3 from "../adapters/uploadS3";
 import axios from 'axios'
 // import serverless from 'serverless-http'
 
@@ -32,7 +32,7 @@ import axios from 'axios'
 //   });
 // });
 //
-// app.get('/backup', async (req, res) => {
+// app.get('/backupWorld', async (req, res) => {
 //   console.log('Starting Backup')
 //   let stream
 //   try {
@@ -79,62 +79,3 @@ import axios from 'axios'
 
 // $FlowFixMe
 // exports.handler = serverless(app);
-
-exports.handler =  async function(event: any): any {
-  console.log('Starting Backup')
-  let stream
-  try {
-    const panda = await axios.get('https://some-random-api.ml/animal/panda')
-    console.log('panda.data', panda.data)
-
-    const startTime = Date.now()
-    stream = await apexGet(
-      config.java.host,
-      config.java.username,
-      config.java.password,
-      config.java.port,
-      config.java.remotePath
-    )
-    // const stream = fs.createReadStream('./temp/test.mov')
-    await uploadS3(
-      // {
-      //   stream,
-      //   sizeBytes: 8.5 * 1024 * 1024
-      // },
-      stream,
-      // fileLoc,
-      // './temp/simpnation.zip',
-      'snapshots',
-      config.java.remotePath,
-      config.aws.bucket
-    )
-
-    return {
-      "statusCode": 200,
-      "headers": {
-        "Content-Type": "application/json"
-      },
-      "isBase64Encoded": false,
-      "multiValueHeaders": {
-        // "X-Custom-Header": ["My value", "My other value"],
-      },
-      "body": JSON.stringify({message: "Backup Complete"})
-    }
-  } catch (err) {
-    console.error(err)
-    if (stream) {
-      stream.partStream.destroy()
-    }
-    return {
-      "statusCode": 400,
-      "headers": {
-        "Content-Type": "application/json"
-      },
-      "isBase64Encoded": false,
-      "multiValueHeaders": {
-        // "X-Custom-Header": ["My value", "My other value"],
-      },
-      "body": JSON.stringify({message: "Backup Failed"})
-    }
-  }
-}

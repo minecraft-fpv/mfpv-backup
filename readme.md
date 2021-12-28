@@ -1,4 +1,4 @@
-# mfpv-backup
+# mfpv-backupWorld
 
 This serverless project will download the world backup from the java server via FTP, and then it will save the snapshot in AWS S3.
 

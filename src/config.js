@@ -18,6 +18,11 @@ const {
   MFPV_AWS_EFS_SECURITY_GROUP_ID,
   MFPV_AWS_ACCESS_KEY_ID,
   MFPV_AWS_SECRET_ACCESS_KEY,
+  MFPV_DB_HOST,
+  MFPV_DB_PORT,
+  MFPV_DB_USER,
+  MFPV_DB_PASS,
+  MFPV_DB_DATABASE,
   NODE_ENV,
 } = process.env
 
@@ -46,6 +51,13 @@ const config: {
     accessKeyId: string,
     secretAccessKey: string,
   },
+  db: {
+    host: string,
+    port: string,
+    user: string,
+    pass: string,
+    database: string
+  }
 } = {
   isOffline: NODE_ENV === 'local',
   java: {
@@ -68,6 +80,13 @@ const config: {
     accessKeyId: assertString(MFPV_AWS_ACCESS_KEY_ID),
     secretAccessKey: assertString(MFPV_AWS_SECRET_ACCESS_KEY)
   },
+  db: {
+    host: assertString(MFPV_DB_HOST),
+    port: assertString(MFPV_DB_PORT),
+    user: assertString(MFPV_DB_USER),
+    pass: assertString(MFPV_DB_PASS),
+    database: assertString(MFPV_DB_DATABASE)
+  }
 }
 
 function assertString(value: any): string {

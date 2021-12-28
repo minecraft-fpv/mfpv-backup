@@ -29,35 +29,25 @@ provider:
 #  individually: true # https://www.serverless.com/framework/docs/providers/aws/guide/packaging#packaging-functions-separately
 
 functions:
-  mfpvBackup: # the name of the lambda. Size of bundle does not seem to affect compute performance but may incur higher memory usage.
-    handler: src/restHandler.handler
-#    vpc:
-#      securityGroupIds:
-#        - '${env:MFPV_AWS_EFS_SECURITY_GROUP_ID}'
-#      subnetIds:
-#        - '${env:MFPV_AWS_EFS_SUBNET_ID}'
+  mfpvBackupWorld: # the name of the lambda. Size of bundle does not seem to affect compute performance but may incur higher memory usage.
+    handler: src/handlers/backupWorld.handler
     events:
       - schedule: cron(0 4 * * ? *)
       - http:
-          path: /backup
+          path: /backup_world
           method: ANY
           cors: true
           async: true
-#      - http:
-#          path: /{proxy+}
-#          method: ANY
-#          cors: true
-#          async: true
+  mfpvBackupData:
+    handler: src/handlers/backupData.handler
+    events:
+      - schedule: cron(0 4 * * ? *)
+      - http:
+          path: /backup_data
+          method: ANY
+          cors: true
+          async: true
 
-#resources:
-#  # Here we are extending the resource config serverless generated for our lambda with FileSystemConfigs.
-#  extensions: # https://www.serverless.com/framework/docs/providers/aws/guide/resources#override-aws-cloudformation-resource
-#    # normalizedFunctionName, see link above ^
-#    MfpvBackupLambdaFunction:
-#      Properties:
-#        FileSystemConfigs:
-#          - Arn: '${env:MFPV_AWS_EFS_FSAP_ARN}'
-#            LocalMountPath: '${env:MFPV_AWS_EFS_MOUNT_POINT}'
 
 plugins:
   - serverless-bundle # Package our functions with Webpack
