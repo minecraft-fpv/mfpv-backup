@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-s3"
 import path from "path"
 import config from "../config"
-import {differenceInCalendarDays, formatISO, isLastDayOfMonth, parseISO} from "date-fns"
+import {differenceInCalendarDays, formatISO, isLastDayOfMonth, isToday, parseISO} from "date-fns"
 import type {MetaStream} from "./apexGet";
 import StreamUploader from "../objects/StreamUploader";
 
@@ -33,11 +33,16 @@ export default async function uploadS3(
     const date = item.LastModified
     const lastSeven = Math.abs(differenceInCalendarDays(Date.now(), date)) <= 7
     const lastDay = isLastDayOfMonth(date)
+    const today = isToday(date)
+
     console.log('date', date)
     console.log('differenceInCalendarDays(Date.now(), date)', differenceInCalendarDays(Date.now(), date))
     console.log('lastSeven', lastSeven)
     console.log('lastDay', lastDay)
-    return !lastSeven && !lastDay
+    console.log('isToday', today)
+
+    const keep = !today && (lastSeven || lastDay)
+    return !keep
   })
   console.log('deletions', deletions.map(_ => _.Key))
 

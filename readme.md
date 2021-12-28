@@ -9,8 +9,8 @@ Once deployed, on a cron timer, it will:
 1. Connect to Java server using FTP and download the world.
 2. Upload the file to S3.
 3. Deletes all files from S3 except:
-  * Files which were made within the last 7 days.
-  * Files which were made on the last day of the month.
+  * Keep 1 file per day from the last 7 days.
+  * Keep 1 file per last day of the month.
 
 This will delete files depending on the `.env` variables you set, so please be careful with your settings.
 
