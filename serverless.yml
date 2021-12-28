@@ -32,7 +32,7 @@ functions:
   mfpvBackupWorld: # the name of the lambda. Size of bundle does not seem to affect compute performance but may incur higher memory usage.
     handler: src/handlers/backupWorld.handler
     events:
-      - schedule: cron(0 4 * * ? *)
+      - schedule: cron(0 4 * * ? *) # This should be a few minutes after the world starts to back up.
       - http:
           path: /backup_world
           method: ANY
@@ -41,7 +41,7 @@ functions:
   mfpvBackupData:
     handler: src/handlers/backupData.handler
     events:
-      - schedule: cron(0 4 * * ? *)
+      - schedule: cron(51 3 * * ? *) # This should be the same time the world starts to back up.
       - http:
           path: /backup_data
           method: ANY

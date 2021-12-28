@@ -8,7 +8,7 @@ import {formatISO} from "date-fns";
 import getS3Client from "../utils/getS3Client";
 import prepareDeletion from "../utils/prepareDeletion";
 
-const S3_FOLDER = 'db-snapshots'
+const S3_FOLDER = 'db-restore-scripts'
 
 exports.handler = async function(event: any): any {
   console.log('Starting DB Backup.')
@@ -23,8 +23,8 @@ exports.handler = async function(event: any): any {
     schema: true,
     data: true,
     // where: {'players': 'id < 1000'}, // Only test players with id < 1000
-    ifNotExist: true,
-    // dropTable: false,
+    ifNotExist: false,
+    dropTable: true,
     // getDump: false,
     // socketPath:
   })
