@@ -10,7 +10,11 @@ import prepareDeletion from "../utils/prepareDeletion";
 
 const S3_FOLDER = 'db-restore-scripts'
 
-exports.handler = async function(event: any): any {
+type Options = {
+  unscheduled?: ?boolean // Used by asyncRestore.js
+}
+
+exports.handler = async function(event: {body: Options}): any {
   console.log('Starting DB Backup.')
 
   const dump = await mysqlBackup({
@@ -34,12 +38,12 @@ exports.handler = async function(event: any): any {
   const client = getS3Client()
 
   const executeDeletion = await prepareDeletion(S3_FOLDER)
-  await upload(client, dump)
+  await upload(client, dump, event.body)
   await executeDeletion()
 }
 
-async function upload(client, dump) {
-  const key = `${S3_FOLDER}/mfpv_${formatISO(Date.now())}.sql`
+async function upload(client, dump, options?: ?Options) {
+  const key = `${options?.unscheduled ? 'unscheduled-' : ''}${S3_FOLDER}/mfpv_${formatISO(Date.now())}.sql`
 
   const uploadRes = await client.send(
     new PutObjectCommand({

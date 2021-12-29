@@ -32,7 +32,7 @@ export default async function apexGet(
   // console.log(`Cleaned Folder: ${path.resolve(basePath)}`)
   console.log("Downloading World from Apex Hosting...")
 
-  const client = new FTP.Client()
+  const client = new FTP.Client(0)
   // client.ftp.verbose = true
 
   await client.access({
