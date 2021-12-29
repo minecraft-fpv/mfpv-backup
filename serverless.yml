@@ -47,7 +47,10 @@ functions:
           method: ANY
           cors: true
           async: true
-
+      - http:
+          path: /backup_data_sync
+          method: ANY
+          cors: true
 
 plugins:
   - serverless-bundle # Package our functions with Webpack

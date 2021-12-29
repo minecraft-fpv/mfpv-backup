@@ -7,6 +7,7 @@ import config from "../config";
 import {formatISO} from "date-fns";
 import getS3Client from "../utils/getS3Client";
 import prepareDeletion from "../utils/prepareDeletion";
+import makeApiGatewayResponse from "../sharedUtils/makeApiGatewayResponse";
 
 const S3_FOLDER = 'db-restore-scripts'
 
@@ -15,35 +16,60 @@ type Options = {
 }
 
 exports.handler = async function(event: {body: Options}): any {
-  console.log('Starting DB Backup.')
+  try {
+    console.log('Starting DB Backup.', event)
 
-  const dump = await mysqlBackup({
-    host: config.db.host,
-    port: config.db.port,
-    user: config.db.user,
-    password: config.db.pass,
-    database: config.db.database,
-    tables: [], // only these tables
-    schema: true,
-    data: true,
-    // where: {'players': 'id < 1000'}, // Only test players with id < 1000
-    ifNotExist: false,
-    dropTable: true,
-    // getDump: false,
-    // socketPath:
-  })
+    if (typeof event.body === 'string') {
+      event.body = JSON.parse(event.body)
+    }
 
-  console.log('dump', dump)
+    console.log('event', event)
 
-  const client = getS3Client()
+    const unscheduled = !!event?.body?.unscheduled
+    // const unscheduled = true
 
-  const executeDeletion = await prepareDeletion(S3_FOLDER)
-  await upload(client, dump, event.body)
-  await executeDeletion()
+    const dump = await mysqlBackup({
+      host: config.db.host,
+      port: config.db.port,
+      user: config.db.user,
+      password: config.db.pass,
+      database: config.db.database,
+      tables: [], // only these tables
+      schema: true,
+      data: true,
+      // where: {'players': 'id < 1000'}, // Only test players with id < 1000
+      ifNotExist: false,
+      dropTable: true,
+      // getDump: false,
+      // socketPath:
+    })
+
+    console.log('dump', dump)
+
+    const client = getS3Client()
+
+    let executeDeletion
+    if (!unscheduled) {
+      executeDeletion = await prepareDeletion(S3_FOLDER)
+    }
+
+    await upload(client, dump, {unscheduled})
+
+    if (executeDeletion) {
+      await executeDeletion()
+    }
+
+    return makeApiGatewayResponse(200, 'OK')
+  } catch (err) {
+    console.error(err)
+    return makeApiGatewayResponse(400, err.message)
+  }
 }
 
 async function upload(client, dump, options?: ?Options) {
   const key = `${options?.unscheduled ? 'unscheduled-' : ''}${S3_FOLDER}/mfpv_${formatISO(Date.now())}.sql`
+
+  console.log('uploading', key)
 
   const uploadRes = await client.send(
     new PutObjectCommand({
