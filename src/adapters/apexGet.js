@@ -49,6 +49,7 @@ export default async function apexGet(
 
   const stream = new PartStream()
 
+  // client.downloadTo(`./temp/Minecraft FPV.zip`, remotePath).then(res => {
   client.downloadTo(stream, remotePath).then(res => {
     console.log('res', res)
     client.close()

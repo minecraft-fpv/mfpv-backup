@@ -4,6 +4,7 @@ import axios from "axios";
 import apexGet from "../adapters/apexGet";
 import config from "../config";
 import uploadS3 from "../adapters/uploadS3";
+import fs from 'fs'
 
 exports.handler = async function(event: any): any {
   console.log('Starting Backup')
@@ -21,18 +22,13 @@ exports.handler = async function(event: any): any {
       config.java.remotePath
     )
     // const stream = fs.createReadStream('./temp/test.mov')
-    await uploadS3(
-      // {
-      //   stream,
-      //   sizeBytes: 8.5 * 1024 * 1024
-      // },
-      stream,
-      // fileLoc,
-      // './temp/simpnation.zip',
-      'snapshots',
-      config.java.remotePath,
-      config.aws.bucket
-    )
+
+    // await uploadS3(
+    //   stream,
+    //   'snapshots',
+    //   config.java.remotePath,
+    //   config.aws.bucket
+    // )
 
     return {
       "statusCode": 200,
