@@ -13,7 +13,6 @@ exports.handler = async function(event: any): any {
     const panda = await axios.get('https://some-random-api.ml/animal/panda')
     console.log('panda.data', panda.data)
 
-    const startTime = Date.now()
     stream = await apexGet(
       config.java.host,
       config.java.username,
@@ -21,14 +20,13 @@ exports.handler = async function(event: any): any {
       config.java.port,
       config.java.remotePath
     )
-    // const stream = fs.createReadStream('./temp/test.mov')
 
-    // await uploadS3(
-    //   stream,
-    //   'snapshots',
-    //   config.java.remotePath,
-    //   config.aws.bucket
-    // )
+    await uploadS3(
+      stream,
+      'snapshots',
+      config.java.remotePath,
+      config.aws.bucket
+    )
 
     return {
       "statusCode": 200,

@@ -55,7 +55,6 @@ import axios from 'axios'
 //       // },
 //       stream,
 //       // fileLoc,
-//       // './temp/simpnation.zip',
 //       'snapshots',
 //       config.java.remotePath,
 //       config.aws.bucket
