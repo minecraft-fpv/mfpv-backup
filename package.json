@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "local": "yarn cross-env NODE_ENV=local serverless offline",
-    "deploy-dev": "yarn cross-env NODE_ENV=development serverless deploy --stage dev",
-    "deploy-prod": "yarn cross-env NODE_ENV=production serverless deploy --stage prod"
+    "deploy": "yarn cross-env NODE_ENV=development serverless deploy --stage dev"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",
