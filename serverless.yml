@@ -16,7 +16,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
-  memorySize: 2048 # optional, in MB, default is 1024
+  memorySize: 10240 # optional, in MB, default is 1024
   timeout: 900 # optional, in seconds, default is 6
 #  iam:
 #    role:
