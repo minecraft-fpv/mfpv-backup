@@ -4,6 +4,7 @@ import getS3Client from "./getS3Client";
 import {DeleteObjectsCommand, ListObjectsCommand} from "@aws-sdk/client-s3";
 import config from "../config";
 import {differenceInCalendarDays, isLastDayOfMonth, isToday} from "date-fns";
+import { DateTime } from "luxon"
 
 /**
  * Deletes files from a folder of your choice so that these rules upheld:
@@ -42,13 +43,13 @@ export default async function prepareDeletion(folderPrefix: string): Promise<() 
   console.log('inTheFolder', inTheFolder.map(item => item.Key))
 
   const deletions = inTheFolder.filter((item) => {
-    const date = item.LastModified
+    const d = DateTime.fromJSDate(item.LastModified, {zone: 'utc'})
+    const date = d.toMillis()
     const lastSeven = Math.abs(differenceInCalendarDays(Date.now(), date)) <= 7
     const lastDay = isLastDayOfMonth(date)
     const today = isToday(date)
 
     console.log('date', date)
-    console.log('differenceInCalendarDays(Date.now(), date)', differenceInCalendarDays(Date.now(), date))
     console.log('lastSeven', lastSeven)
     console.log('lastDay', lastDay)
     console.log('isToday', today)

@@ -10,9 +10,6 @@ exports.handler = async function(event: any): any {
   console.log('Starting Backup')
   let stream
   try {
-    const panda = await axios.get('https://some-random-api.ml/animal/panda')
-    console.log('panda.data', panda.data)
-
     stream = await apexGet(
       config.java.host,
       config.java.username,
@@ -40,6 +37,7 @@ exports.handler = async function(event: any): any {
       "body": JSON.stringify({message: "Backup Complete"})
     }
   } catch (err) {
+    console.log('backupWorld error')
     console.error(err)
     if (stream) {
       stream.partStream.destroy()

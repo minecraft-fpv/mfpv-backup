@@ -5,6 +5,7 @@ import path from "path"
 import config from "../config"
 import * as Stream from "stream"
 import PartStream from "../objects/PartStream";
+import delay from 'delay'
 const FTP = require("basic-ftp")
 
 export type MetaStream = {
@@ -32,8 +33,16 @@ export default async function apexGet(
   // console.log(`Cleaned Folder: ${path.resolve(basePath)}`)
   console.log("Downloading World from Apex Hosting...")
 
-  const client = new FTP.Client(0)
-  // client.ftp.verbose = true
+  const client = new FTP.Client(5000)
+  client.ftp.verbose = true
+
+  console.log('FTP config', {
+    host,
+    port,
+    user: username,
+    password,
+    // secure: true,
+  })
 
   await client.access({
     host,
@@ -43,9 +52,13 @@ export default async function apexGet(
     secure: false,
   })
 
+  console.log("remotePath", remotePath)
+
   const sizeBytes = await client.size(remotePath)
 
   console.log('sizeBytes', sizeBytes)
+
+  await delay(1000)
 
   const stream = new PartStream()
 
@@ -54,6 +67,7 @@ export default async function apexGet(
     console.log('res', res)
     client.close()
   }).catch(err => {
+    console.log('FTP read stream error')
     console.error(err)
     client.close()
     stream.destroy()

@@ -71,12 +71,6 @@ const config: {
     profile: assertString(MFPV_AWS_PROFILE),
     region: assertString(MFPV_AWS_REGION),
     bucket: assertString(MFPV_AWS_BUCKET),
-    efs: {
-      fsAccessPointArn: assertString(MFPV_AWS_EFS_FSAP_ARN),
-      mountPoint: assertString(path.resolve(MFPV_AWS_EFS_MOUNT_POINT || '/')),
-      subnetId: assertString(MFPV_AWS_EFS_SUBNET_ID),
-      securityGroupId: assertString(MFPV_AWS_EFS_SECURITY_GROUP_ID)
-    },
     accessKeyId: assertString(MFPV_AWS_ACCESS_KEY_ID),
     secretAccessKey: assertString(MFPV_AWS_SECRET_ACCESS_KEY)
   },
